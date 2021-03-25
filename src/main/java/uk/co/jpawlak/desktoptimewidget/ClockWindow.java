@@ -2,23 +2,18 @@ package uk.co.jpawlak.desktoptimewidget;
 
 import javax.swing.JLabel;
 import javax.swing.JWindow;
-import javax.swing.SwingWorker;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ClockWindow {
 
+    private static final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+
     private final JWindow window = new JWindow();
     private final JLabel textLabel = new JLabel("");
-    private final SwingWorker<?, ?> swingWorker = new SwingWorker<>() {
-        @Override
-        protected Object doInBackground() throws Exception {
-            int i = 1;
-            while (!isCancelled()) {
-                textLabel.setText("" + i++);
-                Thread.sleep(1000);
-            }
-            return null;
-        }
-    };
+
+    private int i = 1;
 
     public ClockWindow() {
         window.setContentPane(textLabel);
@@ -27,7 +22,7 @@ public class ClockWindow {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        swingWorker.execute();
+        service.scheduleAtFixedRate(() -> textLabel.setText("" + i++), 0, 1, TimeUnit.SECONDS);
     }
 
     public int getWidth() {
