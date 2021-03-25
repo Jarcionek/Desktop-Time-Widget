@@ -2,20 +2,32 @@ package uk.co.jpawlak.desktoptimewidget;
 
 import javax.swing.JLabel;
 import javax.swing.JWindow;
+import javax.swing.SwingWorker;
 
 public class ClockWindow {
 
     private final JWindow window = new JWindow();
-    private final JLabel textLabel;
+    private final JLabel textLabel = new JLabel("");
+    private final SwingWorker<?, ?> swingWorker = new SwingWorker<>() {
+        @Override
+        protected Object doInBackground() throws Exception {
+            int i = 1;
+            while (!isCancelled()) {
+                textLabel.setText("" + i++);
+                Thread.sleep(1000);
+            }
+            return null;
+        }
+    };
 
     public ClockWindow() {
-        textLabel = new JLabel("Thu 25/03/2021 21:08:32");
-
         window.setContentPane(textLabel);
 
-        window.pack();
+        window.setSize(100, 15);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+
+        swingWorker.execute();
     }
 
     public int getWidth() {
