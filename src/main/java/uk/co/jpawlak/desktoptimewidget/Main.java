@@ -1,10 +1,10 @@
 package uk.co.jpawlak.desktoptimewidget;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JWindow;
 import javax.swing.UIManager;
 import java.awt.AWTException;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -28,18 +28,12 @@ public class Main {
     }
 
     private static void createAndDisplayWindow() {
-        JWindow window = new JWindow();
+        ClockWindow clockWindow = new ClockWindow();
 
-        JButton button = new JButton("Hello!");
+        GraphicsDevice primaryScreen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int screenWidth = primaryScreen.getDisplayMode().getWidth();
 
-//        button.addActionListener(e -> window.dispose()); // tray icon is still there so it doesn't terminate the process
-        button.addActionListener(e -> System.exit(0));
-
-        window.setContentPane(button);
-
-        window.pack();
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
+        clockWindow.setLocation(screenWidth - clockWindow.getWidth(), 0); // top right corner
     }
 
     private static void createAndSetSystemTray() {
