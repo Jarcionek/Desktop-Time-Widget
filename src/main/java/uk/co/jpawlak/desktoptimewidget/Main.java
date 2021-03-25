@@ -8,6 +8,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
+import java.awt.Rectangle;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.MouseAdapter;
@@ -28,12 +29,22 @@ public class Main {
     }
 
     private static void createAndDisplayWindow() {
+        GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+
+        GraphicsDevice primaryScreen = screens[0];
         ClockWindow clockWindow = new ClockWindow();
-
-        GraphicsDevice primaryScreen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int screenWidth = primaryScreen.getDisplayMode().getWidth();
-
         clockWindow.setLocation(screenWidth - clockWindow.getWidth(), 0); // top right corner
+
+        GraphicsDevice secondaryScreen = screens[1];
+        Rectangle bounds = secondaryScreen.getDefaultConfiguration().getBounds();
+        clockWindow = new ClockWindow();
+        clockWindow.setLocation(bounds.x, bounds.y); // top left corner
+
+        clockWindow = new ClockWindow();
+        clockWindow.setLocation(bounds.x + bounds.width - clockWindow.getWidth(), bounds.y); // top right corner
+
+        //TODO should be more robust and independent of my setup - e.g. a secondary screen can be on the left side
     }
 
     private static void createAndSetSystemTray() {
@@ -61,6 +72,7 @@ public class Main {
 
         try {
             SystemTray.getSystemTray().add(trayIcon);
+            //TODO when program is killed in IntelliJ, the tray icon is not removed until hovered over
         } catch (AWTException e) {
             throw new RuntimeException(e);
         }
